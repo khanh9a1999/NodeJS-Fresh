@@ -1,17 +1,23 @@
 import type { User } from "../types/user.js";
+import type { CreateUserInput } from "../schemas/user.schema.js";
+import type { IUserRepository } from "../repositories/interfaces/user.repository.js";
 
-const users: User[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-  },
-];
+export class UserService {
+  constructor(private readonly userRepository: IUserRepository) {}
 
-export function getUsers(): User[] {
-  return users;
-}
+  getUsers(): Promise<User[]> {
+    return this.userRepository.findAll();
+  }
 
-export function getFirstUser(): User | undefined {
-  return users[0];
+  getUserById(id: number): Promise<User | undefined> {
+    return this.userRepository.findById(id);
+  }
+
+  getFirstUser(): Promise<User | undefined> {
+    return this.userRepository.findFirst();
+  }
+
+  createUser(input: CreateUserInput): Promise<User> {
+    return this.userRepository.create(input);
+  }
 }

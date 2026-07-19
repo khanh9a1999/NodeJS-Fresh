@@ -1,12 +1,17 @@
 import type { Request, Response } from "express";
-import { getFirstUser } from "../services/user.service.js";
+import { userService } from "../container.js";
+import type { CreateUserInput } from "../schemas/user.schema.js";
+import { successResponse } from "../utils/response.js";
 
-export function listUsers(_req: Request, res: Response): void {
-  const user = getFirstUser();
+export async function listUsers(_req: Request, res: Response): Promise<void> {
+  const users = await userService.getUsers();
 
-  res.status(200).json({
-    success: true,
-    message: "Users",
-    data: user,
-  });
+  successResponse(res, users, "Users");
+}
+
+export async function createUser(req: Request, res: Response): Promise<void> {
+  const input = req.body as CreateUserInput;
+  const user = await userService.createUser(input);
+
+  successResponse(res, user, "User created", 201);
 }
